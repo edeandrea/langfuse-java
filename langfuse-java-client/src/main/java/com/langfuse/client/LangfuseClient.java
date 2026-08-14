@@ -12,6 +12,8 @@ import com.langfuse.api.comments.CommentsApi;
 import com.langfuse.api.datasetItems.DatasetItemsApi;
 import com.langfuse.api.datasetRunItems.DatasetRunItemsApi;
 import com.langfuse.api.datasets.DatasetsApi;
+import com.langfuse.api.experiments.ExperimentsApi;
+import com.langfuse.api.feedback.FeedbackApi;
 import com.langfuse.api.health.HealthApi;
 import com.langfuse.api.ingestion.IngestionApi;
 import com.langfuse.api.legacyMetricsV1.LegacyMetricsV1Api;
@@ -30,8 +32,11 @@ import com.langfuse.api.prompts.PromptsApi;
 import com.langfuse.api.scim.ScimApi;
 import com.langfuse.api.scoreConfigs.ScoreConfigsApi;
 import com.langfuse.api.scores.ScoresApi;
+import com.langfuse.api.scoresV3.ScoresV3Api;
 import com.langfuse.api.sessions.SessionsApi;
 import com.langfuse.api.trace.TraceApi;
+import com.langfuse.api.unstableDashboardWidgets.UnstableDashboardWidgetsApi;
+import com.langfuse.api.unstableDashboards.UnstableDashboardsApi;
 import com.langfuse.api.unstableEvaluationRules.UnstableEvaluationRulesApi;
 import com.langfuse.api.unstableEvaluators.UnstableEvaluatorsApi;
 
@@ -60,6 +65,10 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
   private final com.langfuse.api.datasetRunItems.async.DatasetRunItemsApi asyncDatasetRunItemsApi;
   private final DatasetsApi datasetsApi;
   private final com.langfuse.api.datasets.async.DatasetsApi asyncDatasetsApi;
+  private final ExperimentsApi experimentsApi;
+  private final com.langfuse.api.experiments.async.ExperimentsApi asyncExperimentsApi;
+  private final FeedbackApi feedbackApi;
+  private final com.langfuse.api.feedback.async.FeedbackApi asyncFeedbackApi;
   private final HealthApi healthApi;
   private final com.langfuse.api.health.async.HealthApi asyncHealthApi;
   private final IngestionApi ingestionApi;
@@ -96,10 +105,16 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
   private final com.langfuse.api.scoreConfigs.async.ScoreConfigsApi asyncScoreConfigsApi;
   private final ScoresApi scoresApi;
   private final com.langfuse.api.scores.async.ScoresApi asyncScoresApi;
+  private final ScoresV3Api scoresV3Api;
+  private final com.langfuse.api.scoresV3.async.ScoresV3Api asyncScoresV3Api;
   private final SessionsApi sessionsApi;
   private final com.langfuse.api.sessions.async.SessionsApi asyncSessionsApi;
   private final TraceApi traceApi;
   private final com.langfuse.api.trace.async.TraceApi asyncTraceApi;
+  private final UnstableDashboardWidgetsApi unstableDashboardWidgetsApi;
+  private final com.langfuse.api.unstableDashboardWidgets.async.UnstableDashboardWidgetsApi asyncUnstableDashboardWidgetsApi;
+  private final UnstableDashboardsApi unstableDashboardsApi;
+  private final com.langfuse.api.unstableDashboards.async.UnstableDashboardsApi asyncUnstableDashboardsApi;
   private final UnstableEvaluationRulesApi unstableEvaluationRulesApi;
   private final com.langfuse.api.unstableEvaluationRules.async.UnstableEvaluationRulesApi asyncUnstableEvaluationRulesApi;
   private final UnstableEvaluatorsApi unstableEvaluatorsApi;
@@ -143,6 +158,10 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
     this.asyncDatasetRunItemsApi = new com.langfuse.client.datasetRunItems.async.DatasetRunItemsApi(this);
     this.datasetsApi = new com.langfuse.client.datasets.DatasetsApi(this);
     this.asyncDatasetsApi = new com.langfuse.client.datasets.async.DatasetsApi(this);
+    this.experimentsApi = new com.langfuse.client.experiments.ExperimentsApi(this);
+    this.asyncExperimentsApi = new com.langfuse.client.experiments.async.ExperimentsApi(this);
+    this.feedbackApi = new com.langfuse.client.feedback.FeedbackApi(this);
+    this.asyncFeedbackApi = new com.langfuse.client.feedback.async.FeedbackApi(this);
     this.healthApi = new com.langfuse.client.health.HealthApi(this);
     this.asyncHealthApi = new com.langfuse.client.health.async.HealthApi(this);
     this.ingestionApi = new com.langfuse.client.ingestion.IngestionApi(this);
@@ -179,10 +198,16 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
     this.asyncScoreConfigsApi = new com.langfuse.client.scoreConfigs.async.ScoreConfigsApi(this);
     this.scoresApi = new com.langfuse.client.scores.ScoresApi(this);
     this.asyncScoresApi = new com.langfuse.client.scores.async.ScoresApi(this);
+    this.scoresV3Api = new com.langfuse.client.scoresV3.ScoresV3Api(this);
+    this.asyncScoresV3Api = new com.langfuse.client.scoresV3.async.ScoresV3Api(this);
     this.sessionsApi = new com.langfuse.client.sessions.SessionsApi(this);
     this.asyncSessionsApi = new com.langfuse.client.sessions.async.SessionsApi(this);
     this.traceApi = new com.langfuse.client.trace.TraceApi(this);
     this.asyncTraceApi = new com.langfuse.client.trace.async.TraceApi(this);
+    this.unstableDashboardWidgetsApi = new com.langfuse.client.unstableDashboardWidgets.UnstableDashboardWidgetsApi(this);
+    this.asyncUnstableDashboardWidgetsApi = new com.langfuse.client.unstableDashboardWidgets.async.UnstableDashboardWidgetsApi(this);
+    this.unstableDashboardsApi = new com.langfuse.client.unstableDashboards.UnstableDashboardsApi(this);
+    this.asyncUnstableDashboardsApi = new com.langfuse.client.unstableDashboards.async.UnstableDashboardsApi(this);
     this.unstableEvaluationRulesApi = new com.langfuse.client.unstableEvaluationRules.UnstableEvaluationRulesApi(this);
     this.asyncUnstableEvaluationRulesApi = new com.langfuse.client.unstableEvaluationRules.async.UnstableEvaluationRulesApi(this);
     this.unstableEvaluatorsApi = new com.langfuse.client.unstableEvaluators.UnstableEvaluatorsApi(this);
@@ -247,6 +272,26 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
   @Override
   public com.langfuse.api.datasets.async.DatasetsApi asyncDatasets() {
     return asyncDatasetsApi;
+  }
+
+  @Override
+  public ExperimentsApi experiments() {
+    return experimentsApi;
+  }
+
+  @Override
+  public com.langfuse.api.experiments.async.ExperimentsApi asyncExperiments() {
+    return asyncExperimentsApi;
+  }
+
+  @Override
+  public FeedbackApi feedback() {
+    return feedbackApi;
+  }
+
+  @Override
+  public com.langfuse.api.feedback.async.FeedbackApi asyncFeedback() {
+    return asyncFeedbackApi;
   }
 
   @Override
@@ -430,6 +475,16 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
   }
 
   @Override
+  public ScoresV3Api scoresV3() {
+    return scoresV3Api;
+  }
+
+  @Override
+  public com.langfuse.api.scoresV3.async.ScoresV3Api asyncScoresV3() {
+    return asyncScoresV3Api;
+  }
+
+  @Override
   public SessionsApi sessions() {
     return sessionsApi;
   }
@@ -447,6 +502,26 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
   @Override
   public com.langfuse.api.trace.async.TraceApi asyncTrace() {
     return asyncTraceApi;
+  }
+
+  @Override
+  public UnstableDashboardWidgetsApi unstableDashboardWidgets() {
+    return unstableDashboardWidgetsApi;
+  }
+
+  @Override
+  public com.langfuse.api.unstableDashboardWidgets.async.UnstableDashboardWidgetsApi asyncUnstableDashboardWidgets() {
+    return asyncUnstableDashboardWidgetsApi;
+  }
+
+  @Override
+  public UnstableDashboardsApi unstableDashboards() {
+    return unstableDashboardsApi;
+  }
+
+  @Override
+  public com.langfuse.api.unstableDashboards.async.UnstableDashboardsApi asyncUnstableDashboards() {
+    return asyncUnstableDashboardsApi;
   }
 
   @Override

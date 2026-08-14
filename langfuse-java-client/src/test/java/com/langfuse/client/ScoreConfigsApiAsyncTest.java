@@ -13,7 +13,11 @@ import org.junit.jupiter.api.TestMethodOrder;
 import com.langfuse.api.model.CreateScoreConfigRequest;
 import com.langfuse.api.model.ScoreConfig;
 import com.langfuse.api.model.ScoreConfigDataType;
-import com.langfuse.api.scoreConfigs.ScoreConfigsApi;
+import com.langfuse.api.model.UpdateScoreConfigRequest;
+import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsCreateRequest;
+import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsGetByIdRequest;
+import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsGetRequest;
+import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsUpdateRequest;
 
 /**
  * Async integration tests for the Score Configs API.
@@ -30,7 +34,7 @@ class ScoreConfigsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createNumericScoreConfig() {
         assertThat(client.asyncScoreConfigs().scoreConfigsCreate(
-                ScoreConfigsApi.APIScoreConfigsCreateRequest.newBuilder()
+                APIScoreConfigsCreateRequest.newBuilder()
                         .createScoreConfigRequest(CreateScoreConfigRequest.builder()
                                 .name(CONFIG_NAME)
                                 .dataType(ScoreConfigDataType.NUMERIC)
@@ -52,7 +56,7 @@ class ScoreConfigsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void getScoreConfigById() {
         assertThat(client.asyncScoreConfigs().scoreConfigsGetById(
-                ScoreConfigsApi.APIScoreConfigsGetByIdRequest.newBuilder()
+                APIScoreConfigsGetByIdRequest.newBuilder()
                         .configId(configId)
                         .build()))
                 .succeedsWithin(Duration.ofSeconds(5))
@@ -64,12 +68,31 @@ class ScoreConfigsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void listScoreConfigs() {
         assertThat(client.asyncScoreConfigs().scoreConfigsGet(
-                ScoreConfigsApi.APIScoreConfigsGetRequest.newBuilder()
+                APIScoreConfigsGetRequest.newBuilder()
                         .build()))
                 .succeedsWithin(Duration.ofSeconds(5))
                 .satisfies(configs ->
                         assertThat(configs.getData())
                                 .isNotEmpty()
                                 .anyMatch(c -> CONFIG_NAME.equals(c.getName())));
+    }
+
+    @Test
+    @Order(3)
+    void updateScoreConfig() {
+        assertThat(client.asyncScoreConfigs().scoreConfigsUpdate(
+                APIScoreConfigsUpdateRequest.newBuilder()
+                        .configId(configId)
+                        .updateScoreConfigRequest(UpdateScoreConfigRequest.builder()
+                                .description("Updated async description")
+                                .isArchived(true)
+                                .build())
+                        .build()))
+                .succeedsWithin(Duration.ofSeconds(5))
+                .satisfies(config -> {
+                    assertThat(config.getId()).isEqualTo(configId);
+                    assertThat(config.getDescription()).isEqualTo("Updated async description");
+                    assertThat(config.getIsArchived()).isTrue();
+                });
     }
 }

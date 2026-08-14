@@ -18,7 +18,10 @@ import com.langfuse.api.model.CreateChatPromptType;
 import com.langfuse.api.model.CreatePromptRequest;
 import com.langfuse.api.model.CreateTextPromptRequest;
 import com.langfuse.api.model.CreateTextPromptType;
-import com.langfuse.api.prompts.PromptsApi;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsCreateRequest;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsDeleteRequest;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsGetRequest;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsListRequest;
 
 /**
  * Async integration tests for the Prompts API.
@@ -35,7 +38,7 @@ class PromptsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createTextPrompt() {
         assertThat(client.asyncPrompts().promptsCreate(
-                PromptsApi.APIPromptsCreateRequest.newBuilder()
+                APIPromptsCreateRequest.newBuilder()
                         .createPromptRequest(new CreatePromptRequest(
                                 CreateTextPromptRequest.builder()
                                         .name(TEXT_PROMPT_NAME)
@@ -53,7 +56,7 @@ class PromptsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createChatPrompt() {
         assertThat(client.asyncPrompts().promptsCreate(
-                PromptsApi.APIPromptsCreateRequest.newBuilder()
+                APIPromptsCreateRequest.newBuilder()
                         .createPromptRequest(new CreatePromptRequest(
                                 CreateChatPromptRequest.builder()
                                         .name(CHAT_PROMPT_NAME)
@@ -75,7 +78,7 @@ class PromptsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void fetchTextPrompt() {
         assertThat(client.asyncPrompts().promptsGet(
-                PromptsApi.APIPromptsGetRequest.newBuilder()
+                APIPromptsGetRequest.newBuilder()
                         .promptName(TEXT_PROMPT_NAME)
                         .build())
                 )
@@ -87,7 +90,7 @@ class PromptsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void fetchChatPrompt() {
         assertThat(client.asyncPrompts().promptsGet(
-                PromptsApi.APIPromptsGetRequest.newBuilder()
+                APIPromptsGetRequest.newBuilder()
                         .promptName(CHAT_PROMPT_NAME)
                         .build())
                 )
@@ -99,11 +102,21 @@ class PromptsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void listPromptsContainsCreatedPrompts() {
         assertThat(client.asyncPrompts().promptsList(
-                PromptsApi.APIPromptsListRequest.newBuilder()
+                APIPromptsListRequest.newBuilder()
                         .build())
                 )
                 .succeedsWithin(Duration.ofSeconds(5))
                 .satisfies(prompts ->
                         assertThat(prompts.getData()).isNotEmpty());
+    }
+
+    @Test
+    @Order(3)
+    void deletePrompt() {
+        assertThat(client.asyncPrompts().promptsDelete(
+                APIPromptsDeleteRequest.newBuilder()
+                        .promptName(TEXT_PROMPT_NAME)
+                        .build()))
+                .succeedsWithin(Duration.ofSeconds(5));
     }
 }

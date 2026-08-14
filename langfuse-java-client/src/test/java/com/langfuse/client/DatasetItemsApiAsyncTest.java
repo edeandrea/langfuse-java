@@ -11,8 +11,11 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import com.langfuse.api.datasetItems.DatasetItemsApi;
-import com.langfuse.api.datasets.DatasetsApi;
+import com.langfuse.api.datasetItems.DatasetItemsApi.APIDatasetItemsCreateRequest;
+import com.langfuse.api.datasetItems.DatasetItemsApi.APIDatasetItemsDeleteRequest;
+import com.langfuse.api.datasetItems.DatasetItemsApi.APIDatasetItemsGetRequest;
+import com.langfuse.api.datasetItems.DatasetItemsApi.APIDatasetItemsListRequest;
+import com.langfuse.api.datasets.DatasetsApi.APIDatasetsCreateRequest;
 import com.langfuse.api.model.CreateDatasetItemRequest;
 import com.langfuse.api.model.CreateDatasetRequest;
 
@@ -31,14 +34,14 @@ class DatasetItemsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createDatasetAndItem() {
         client.datasets().datasetsCreate(
-                DatasetsApi.APIDatasetsCreateRequest.newBuilder()
+                APIDatasetsCreateRequest.newBuilder()
                         .createDatasetRequest(CreateDatasetRequest.builder()
                                 .name(DATASET_NAME)
                                 .build())
                         .build());
 
         assertThat(client.asyncDatasetItems().datasetItemsCreate(
-                DatasetItemsApi.APIDatasetItemsCreateRequest.newBuilder()
+                APIDatasetItemsCreateRequest.newBuilder()
                         .createDatasetItemRequest(CreateDatasetItemRequest.builder()
                                 .datasetName(DATASET_NAME)
                                 .input(Map.of("question", "What is async?"))
@@ -56,7 +59,7 @@ class DatasetItemsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void getDatasetItem() {
         assertThat(client.asyncDatasetItems().datasetItemsGet(
-                DatasetItemsApi.APIDatasetItemsGetRequest.newBuilder()
+                APIDatasetItemsGetRequest.newBuilder()
                         .id(datasetItemId)
                         .build()))
                 .succeedsWithin(Duration.ofSeconds(5))
@@ -68,7 +71,7 @@ class DatasetItemsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void listDatasetItems() {
         assertThat(client.asyncDatasetItems().datasetItemsList(
-                DatasetItemsApi.APIDatasetItemsListRequest.newBuilder()
+                APIDatasetItemsListRequest.newBuilder()
                         .datasetName(DATASET_NAME)
                         .build()))
                 .succeedsWithin(Duration.ofSeconds(5))
@@ -76,5 +79,17 @@ class DatasetItemsApiAsyncTest extends AbstractLangfuseClientTest {
                         assertThat(items.getData())
                                 .isNotEmpty()
                                 .anyMatch(i -> datasetItemId.equals(i.getId())));
+    }
+
+    @Test
+    @Order(3)
+    void deleteDatasetItem() {
+        assertThat(client.asyncDatasetItems().datasetItemsDelete(
+                APIDatasetItemsDeleteRequest.newBuilder()
+                        .id(datasetItemId)
+                        .build()))
+                .succeedsWithin(Duration.ofSeconds(5))
+                .satisfies(response ->
+                        assertThat(response.getMessage()).isNotBlank());
     }
 }

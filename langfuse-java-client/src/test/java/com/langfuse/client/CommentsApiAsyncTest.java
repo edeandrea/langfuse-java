@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import org.junit.jupiter.api.MethodOrderer;
@@ -14,14 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import com.langfuse.api.LangfuseApiException;
-import com.langfuse.api.comments.CommentsApi;
-import com.langfuse.api.ingestion.IngestionApi;
+import com.langfuse.api.comments.CommentsApi.APICommentsCreateRequest;
+import com.langfuse.api.comments.CommentsApi.APICommentsGetByIdRequest;
+import com.langfuse.api.comments.CommentsApi.APICommentsGetRequest;
 import com.langfuse.api.model.Comment;
 import com.langfuse.api.model.CreateCommentRequest;
-import com.langfuse.api.model.IngestionBatchRequest;
-import com.langfuse.api.model.IngestionEvent;
-import com.langfuse.api.model.IngestionEventOneOf;
-import com.langfuse.api.model.TraceBody;
 
 /**
  * Async integration tests for the Comments API.
@@ -31,31 +26,14 @@ import com.langfuse.api.model.TraceBody;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CommentsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String TRACE_ID = UUID.randomUUID().toString();
+    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
     private static String commentId;
 
     @Test
     @Order(1)
     void ingestTrace() {
-        var traceEvent = IngestionEventOneOf.builder()
-                .id(UUID.randomUUID().toString())
-                .timestamp(OffsetDateTime.now().toString())
-                .type(IngestionEventOneOf.TypeEnum.TRACE_CREATE)
-                .body(TraceBody.builder()
-                        .id(TRACE_ID)
-                        .name("async-comments-test-trace")
-                        .build())
-                .build();
-
-        var response = client.ingestion().ingestionBatch(
-                IngestionApi.APIIngestionBatchRequest.newBuilder()
-                        .ingestionBatchRequest(IngestionBatchRequest.builder()
-                                .batch(List.of(new IngestionEvent(traceEvent)))
-                                .build())
-                        .build());
-
-        assertThat(response.getSuccesses())
-                .isNotEmpty();
+        ingestTrace(TRACE_ID, SPAN_ID, "async-comments-test-trace");
     }
 
     @Test
@@ -68,7 +46,7 @@ class CommentsApiAsyncTest extends AbstractLangfuseClientTest {
                     var projectId = client.projects().projectsGet().getData().get(0).getId();
 
                     assertThat(client.asyncComments().commentsCreate(
-                            CommentsApi.APICommentsCreateRequest.newBuilder()
+                            APICommentsCreateRequest.newBuilder()
                                     .createCommentRequest(CreateCommentRequest.builder()
                                             .projectId(projectId)
                                             .objectType("TRACE")
@@ -88,7 +66,7 @@ class CommentsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(3)
     void getCommentById() {
         assertThat(client.asyncComments().commentsGetById(
-                CommentsApi.APICommentsGetByIdRequest.newBuilder()
+                APICommentsGetByIdRequest.newBuilder()
                         .commentId(commentId)
                         .build()))
                 .succeedsWithin(Duration.ofSeconds(5))
@@ -100,7 +78,7 @@ class CommentsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(3)
     void listComments() {
         assertThat(client.asyncComments().commentsGet(
-                CommentsApi.APICommentsGetRequest.newBuilder()
+                APICommentsGetRequest.newBuilder()
                         .objectType("TRACE")
                         .objectId(TRACE_ID)
                         .build()))

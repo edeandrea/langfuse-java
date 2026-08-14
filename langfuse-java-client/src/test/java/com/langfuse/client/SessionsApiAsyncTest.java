@@ -4,8 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.MethodOrderer;
@@ -14,15 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import com.langfuse.api.LangfuseApiException;
-import com.langfuse.api.ingestion.IngestionApi;
-import com.langfuse.api.model.IngestionBatchRequest;
-import com.langfuse.api.model.IngestionEvent;
-import com.langfuse.api.model.IngestionEventOneOf;
-import com.langfuse.api.model.TraceBody;
-import com.langfuse.api.sessions.SessionsApi;
+import com.langfuse.api.observations.ObservationsApi.APIObservationsGetManyRequest;
+import com.langfuse.api.sessions.SessionsApi.APISessionsGetRequest;
+import com.langfuse.api.sessions.SessionsApi.APISessionsListRequest;
 
 /**
  * Async integration tests for the Sessions API.
+ *
+ * <p>In Langfuse v4 {@code events_only} mode, legacy sessions endpoints return 404.
+ * This test verifies the 404 behavior and uses the v2 observations API as the replacement.
  *
  * @author Eric Deandrea
  */
@@ -30,61 +29,51 @@ import com.langfuse.api.sessions.SessionsApi;
 class SessionsApiAsyncTest extends AbstractLangfuseClientTest {
 
     private static final String SESSION_ID = "async-test-session-" + UUID.randomUUID();
+    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
+
+    @Test
+    void sessionsGetReturns404InEventsOnlyMode() {
+        assertThat(client.asyncSessions().sessionsGet(
+                APISessionsGetRequest.newBuilder()
+                        .sessionId("nonexistent-" + UUID.randomUUID())
+                        .build()))
+                .failsWithin(Duration.ofSeconds(5))
+                .withThrowableThat()
+                .withCauseInstanceOf(LangfuseApiException.class);
+    }
+
+    @Test
+    void sessionsListReturns404InEventsOnlyMode() {
+        assertThat(client.asyncSessions().sessionsList(
+                APISessionsListRequest.newBuilder()
+                        .build()))
+                .failsWithin(Duration.ofSeconds(5))
+                .withThrowableThat()
+                .withCauseInstanceOf(LangfuseApiException.class);
+    }
 
     @Test
     @Order(1)
     void ingestTraceWithSession() {
-        var traceEvent = IngestionEventOneOf.builder()
-                .id(UUID.randomUUID().toString())
-                .timestamp(OffsetDateTime.now().toString())
-                .type(IngestionEventOneOf.TypeEnum.TRACE_CREATE)
-                .body(TraceBody.builder()
-                        .id(UUID.randomUUID().toString())
-                        .name("async-sessions-test-trace")
-                        .sessionId(SESSION_ID)
-                        .build())
-                .build();
-
-        assertThat(client.asyncIngestion().ingestionBatch(
-                IngestionApi.APIIngestionBatchRequest.newBuilder()
-                        .ingestionBatchRequest(IngestionBatchRequest.builder()
-                                .batch(List.of(new IngestionEvent(traceEvent)))
-                                .build())
-                        .build()))
-                .succeedsWithin(Duration.ofSeconds(5))
-                .satisfies(response -> assertThat(response.getSuccesses()).isNotEmpty());
+        ingestTrace(TRACE_ID, SPAN_ID, "async-sessions-test-trace", Map.of("session.id", SESSION_ID));
     }
 
     @Test
     @Order(2)
-    void getSession() {
+    void querySessionDataViaV2ObservationsAsync() {
         await().atMost(Duration.ofSeconds(15))
                 .pollInterval(Duration.ofSeconds(1))
                 .ignoreExceptionsMatching(LangfuseApiException.class::isInstance)
                 .untilAsserted(() ->
-                        assertThat(client.asyncSessions().sessionsGet(
-                                SessionsApi.APISessionsGetRequest.newBuilder()
-                                        .sessionId(SESSION_ID)
+                        assertThat(client.asyncObservations().observationsGetMany(
+                                APIObservationsGetManyRequest.newBuilder()
+                                        .traceId(TRACE_ID)
                                         .build()))
                                 .succeedsWithin(Duration.ofSeconds(5))
-                                .satisfies(session ->
-                                        assertThat(session.getId()).isEqualTo(SESSION_ID)));
-    }
-
-    @Test
-    @Order(2)
-    void listSessions() {
-        await().atMost(Duration.ofSeconds(15))
-                .pollInterval(Duration.ofSeconds(1))
-                .ignoreExceptionsMatching(LangfuseApiException.class::isInstance)
-                .untilAsserted(() ->
-                        assertThat(client.asyncSessions().sessionsList(
-                                SessionsApi.APISessionsListRequest.newBuilder()
-                                        .build()))
-                                .succeedsWithin(Duration.ofSeconds(5))
-                                .satisfies(sessions ->
-                                        assertThat(sessions.getData())
+                                .satisfies(response ->
+                                        assertThat(response.getData())
                                                 .isNotEmpty()
-                                                .anyMatch(s -> SESSION_ID.equals(s.getId()))));
+                                                .anyMatch(o -> "root-span".equals(o.getName()))));
     }
 }

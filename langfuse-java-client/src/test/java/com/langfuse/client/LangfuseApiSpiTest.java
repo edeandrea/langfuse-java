@@ -2,9 +2,9 @@ package com.langfuse.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.langfuse.api.LangfuseApi;
-
 import org.junit.jupiter.api.Test;
+
+import com.langfuse.api.LangfuseApi;
 
 class LangfuseApiSpiTest {
 

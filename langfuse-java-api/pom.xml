@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.jspecify</groupId>
             <artifactId>jspecify</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -92,6 +92,7 @@
                             <templateResourcePath>${project.basedir}/src/main/templates</templateResourcePath>
                             <output>${project.build.directory}/generated-sources/openapi-models</output>
                             <cleanupOutput>true</cleanupOutput>
+                            <skipValidateSpec>true</skipValidateSpec>
                             <generateApis>false</generateApis>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
@@ -126,6 +127,7 @@
                             <generatorName>java</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi-apis</output>
                             <cleanupOutput>true</cleanupOutput>
+                            <skipValidateSpec>true</skipValidateSpec>
                             <templateResourcePath>${project.basedir}/src/main/templates</templateResourcePath>
                             <generateModels>false</generateModels>
                             <generateApiTests>false</generateApiTests>
@@ -158,6 +160,7 @@
                             <generatorName>java</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi-async-apis</output>
                             <cleanupOutput>true</cleanupOutput>
+                            <skipValidateSpec>true</skipValidateSpec>
                             <templateResourcePath>${project.basedir}/src/main/templates-async</templateResourcePath>
                             <generateModels>false</generateModels>
                             <generateApiTests>false</generateApiTests>
@@ -188,7 +191,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>fix-generic-type-references</id>

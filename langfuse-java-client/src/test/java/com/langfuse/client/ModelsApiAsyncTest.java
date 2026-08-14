@@ -13,7 +13,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import com.langfuse.api.model.CreateModelRequest;
 import com.langfuse.api.model.Model;
 import com.langfuse.api.model.ModelUsageUnit;
-import com.langfuse.api.models.ModelsApi;
+import com.langfuse.api.models.ModelsApi.APIModelsCreateRequest;
+import com.langfuse.api.models.ModelsApi.APIModelsDeleteRequest;
+import com.langfuse.api.models.ModelsApi.APIModelsGetRequest;
+import com.langfuse.api.models.ModelsApi.APIModelsListRequest;
 
 /**
  * Async integration tests for the Models API.
@@ -30,7 +33,7 @@ class ModelsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createModel() {
         assertThat(client.asyncModels().modelsCreate(
-                ModelsApi.APIModelsCreateRequest.newBuilder()
+                APIModelsCreateRequest.newBuilder()
                         .createModelRequest(CreateModelRequest.builder()
                                 .modelName(MODEL_NAME)
                                 .matchPattern("(?i)^(%s)(-.+)?$".formatted(MODEL_NAME))
@@ -52,7 +55,7 @@ class ModelsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void getModel() {
         assertThat(client.asyncModels().modelsGet(
-                ModelsApi.APIModelsGetRequest.newBuilder()
+                APIModelsGetRequest.newBuilder()
                         .id(modelId)
                         .build()))
                 .succeedsWithin(Duration.ofSeconds(5))
@@ -64,7 +67,7 @@ class ModelsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(2)
     void listModels() {
         assertThat(client.asyncModels().modelsList(
-                ModelsApi.APIModelsListRequest.newBuilder()
+                APIModelsListRequest.newBuilder()
                         .limit(100)
                         .build()))
                 .succeedsWithin(Duration.ofSeconds(5))
@@ -78,7 +81,7 @@ class ModelsApiAsyncTest extends AbstractLangfuseClientTest {
     @Order(3)
     void deleteModel() {
         assertThat(client.asyncModels().modelsDelete(
-                ModelsApi.APIModelsDeleteRequest.newBuilder()
+                APIModelsDeleteRequest.newBuilder()
                         .id(modelId)
                         .build()))
                 .succeedsWithin(Duration.ofSeconds(5));

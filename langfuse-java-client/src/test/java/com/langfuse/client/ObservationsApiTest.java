@@ -4,8 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.MethodOrderer;
@@ -14,15 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import com.langfuse.api.LangfuseApiException;
-import com.langfuse.api.ingestion.IngestionApi;
-import com.langfuse.api.legacyObservationsV1.LegacyObservationsV1Api;
-import com.langfuse.api.model.CreateSpanBody;
-import com.langfuse.api.model.IngestionBatchRequest;
-import com.langfuse.api.model.ObservationsView;
-import com.langfuse.api.model.IngestionEvent;
-import com.langfuse.api.model.IngestionEventOneOf;
-import com.langfuse.api.model.IngestionEventOneOf2;
-import com.langfuse.api.model.TraceBody;
+import com.langfuse.api.model.ObservationV2;
+import com.langfuse.api.model.OtelSpan;
+import com.langfuse.api.observations.ObservationsApi.APIObservationsGetManyRequest;
 
 /**
  * Integration tests for the Observations API.
@@ -32,69 +25,63 @@ import com.langfuse.api.model.TraceBody;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class ObservationsApiTest extends AbstractLangfuseClientTest {
 
-    private static final String TRACE_ID = UUID.randomUUID().toString();
-    private static final String SPAN_ID = UUID.randomUUID().toString();
-    private static final String SPAN_NAME = "observations-test-span-" + UUID.randomUUID();
+    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private static final String ROOT_SPAN_ID = TRACE_ID.substring(0, 16);
+    private static final String CHILD_SPAN_ID = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+    private static final String CHILD_SPAN_NAME = "observations-test-span-" + UUID.randomUUID();
 
     @Test
     @Order(1)
     void ingestTraceWithSpan() {
-        assertThat(client.ingestion().ingestionBatch(
-                IngestionApi.APIIngestionBatchRequest.newBuilder()
-                        .ingestionBatchRequest(IngestionBatchRequest.builder()
-                                .batch(List.of(
-                                        new IngestionEvent(IngestionEventOneOf.builder()
-                                                .id(UUID.randomUUID().toString())
-                                                .timestamp(OffsetDateTime.now().toString())
-                                                .type(IngestionEventOneOf.TypeEnum.TRACE_CREATE)
-                                                .body(TraceBody.builder()
-                                                        .id(TRACE_ID)
-                                                        .name("observations-test-trace")
-                                                        .build())
-                                                .build()),
-                                        new IngestionEvent(IngestionEventOneOf2.builder()
-                                                .id(UUID.randomUUID().toString())
-                                                .timestamp(OffsetDateTime.now().toString())
-                                                .type(IngestionEventOneOf2.TypeEnum.SPAN_CREATE)
-                                                .body(CreateSpanBody.builder()
-                                                        .id(SPAN_ID)
-                                                        .traceId(TRACE_ID)
-                                                        .name(SPAN_NAME)
-                                                        .build())
-                                                .build())))
-                                .build())
-                        .build()))
-                .satisfies(response -> {
-                    assertThat(response.getSuccesses()).hasSize(2)
-                            .allSatisfy(s -> assertThat(s.getStatus()).isEqualTo(201));
-                    assertThat(response.getErrors()).isEmpty();
-                });
+        var nowNanos = String.valueOf(System.currentTimeMillis() * 1_000_000L);
+        var endNanos = String.valueOf(Long.parseLong(nowNanos) + 1_000_000_000L);
+
+        var rootSpan = OtelSpan.builder()
+                .traceId(TRACE_ID)
+                .spanId(ROOT_SPAN_ID)
+                .name("root-span")
+                .kind(1)
+                .startTimeUnixNano(nowNanos)
+                .endTimeUnixNano(endNanos)
+                .build();
+
+        var childSpan = OtelSpan.builder()
+                .traceId(TRACE_ID)
+                .spanId(CHILD_SPAN_ID)
+                .parentSpanId(ROOT_SPAN_ID)
+                .name(CHILD_SPAN_NAME)
+                .kind(2)
+                .startTimeUnixNano(nowNanos)
+                .endTimeUnixNano(endNanos)
+                .build();
+
+        ingestTraceWithSpans("observations-test-trace", Map.of(), rootSpan, childSpan);
     }
 
     @Test
     @Order(2)
-    void listObservationsViaLegacyApi() {
+    void listObservationsViaV2Api() {
         await().atMost(Duration.ofSeconds(15))
                 .pollInterval(Duration.ofSeconds(1))
                 .ignoreExceptionsMatching(LangfuseApiException.class::isInstance)
                 .untilAsserted(() ->
-                        assertThat(client.legacyObservationsV1().legacyObservationsV1GetMany(
-                                LegacyObservationsV1Api.APILegacyObservationsV1GetManyRequest.newBuilder()
+                        assertThat(client.observations().observationsGetMany(
+                                APIObservationsGetManyRequest.newBuilder()
                                         .traceId(TRACE_ID)
                                         .build()))
                                 .satisfies(observations -> {
                                     assertThat(observations.getData())
                                             .isNotEmpty()
-                                            .anyMatch(o -> SPAN_NAME.equals(o.getName()));
+                                            .anyMatch(o -> CHILD_SPAN_NAME.equals(o.getName()));
 
                                     var span = observations.getData().stream()
-                                            .filter(o -> SPAN_NAME.equals(o.getName()))
+                                            .filter(o -> CHILD_SPAN_NAME.equals(o.getName()))
                                             .findFirst()
                                             .orElseThrow();
 
                                     assertThat(span)
                                             .satisfies(s -> assertThat(s.getStartTime()).isNotNull())
-                                            .extracting(ObservationsView::getTraceId, ObservationsView::getType)
+                                            .extracting(ObservationV2::getTraceId, ObservationV2::getType)
                                             .containsExactly(TRACE_ID, "SPAN");
                                 }));
     }

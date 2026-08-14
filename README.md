@@ -32,6 +32,10 @@ This means:
 - Framework integrations (Spring, Quarkus) can provide their own `LangfuseApiBuilderFactory` via `ServiceLoader` without depending on the reference client.
 - The `langfuse-java-client` module includes a comprehensive integration test suite (sync and async) that uses the `langfuse-java-testcontainers` module to verify every API operation against a real Langfuse environment.
 
+## Langfuse Version Compatibility
+
+This SDK targets **Langfuse v4** (`events_only` write mode). See [Migrating from Langfuse v3 to v4](#migrating-from-langfuse-v3-to-v4) for details on breaking changes and API replacements.
+
 ## Requirements
 
 - Java 17+
@@ -80,37 +84,61 @@ var langfuse = LangfuseApi.builder()
 The builder uses `ServiceLoader` to discover the client implementation on the classpath.
 When both Jackson 2 and Jackson 3 are present, Jackson 3 is preferred.
 
-### Ingest a trace
+### Ingest a trace (via OpenTelemetry)
+
+Langfuse v4 uses the OpenTelemetry endpoint for trace ingestion:
 
 ```java
-var response = langfuse.ingestion().ingestionBatch(
-        IngestionApi.APIIngestionBatchRequest.newBuilder()
-                .ingestionBatchRequest(IngestionBatchRequest.builder()
-                        .batch(List.of(new IngestionEvent(IngestionEventOneOf.builder()
-                                .id(UUID.randomUUID().toString())
-                                .timestamp(OffsetDateTime.now().toString())
-                                .type(IngestionEventOneOf.TypeEnum.TRACE_CREATE)
-                                .body(TraceBody.builder()
-                                        .id(UUID.randomUUID().toString())
-                                        .name("my-trace")
-                                        .userId("user-123")
+var traceId = UUID.randomUUID().toString().replace("-", "");
+var spanId = traceId.substring(0, 16);
+var nowNanos = String.valueOf(System.currentTimeMillis() * 1_000_000L);
+
+langfuse.opentelemetry().opentelemetryExportTraces(
+        OpentelemetryApi.APIOpentelemetryExportTracesRequest.newBuilder()
+                .opentelemetryExportTracesRequest(OpentelemetryExportTracesRequest.builder()
+                        .resourceSpans(List.of(OtelResourceSpan.builder()
+                                .resource(OtelResource.builder()
+                                        .attributes(List.of(
+                                                OtelAttribute.builder()
+                                                        .key("langfuse.trace.name")
+                                                        .value(OtelAttributeValue.builder()
+                                                                .stringValue("my-trace")
+                                                                .build())
+                                                        .build(),
+                                                OtelAttribute.builder()
+                                                        .key("langfuse.trace.user.id")
+                                                        .value(OtelAttributeValue.builder()
+                                                                .stringValue("user-123")
+                                                                .build())
+                                                        .build()))
                                         .build())
-                                .build())))
+                                .scopeSpans(List.of(OtelScopeSpan.builder()
+                                        .scope(OtelScope.builder().name("my-service").build())
+                                        .spans(List.of(OtelSpan.builder()
+                                                .traceId(traceId)
+                                                .spanId(spanId)
+                                                .name("root-span")
+                                                .kind(1)
+                                                .startTimeUnixNano(nowNanos)
+                                                .endTimeUnixNano(nowNanos)
+                                                .build()))
+                                        .build()))
+                                .build()))
                         .build())
                 .build());
 ```
 
-### Query traces
+### Query observations
 
 ```java
-var traces = langfuse.trace().traceList(
-        TraceApi.APITraceListRequest.newBuilder()
-                .name("my-trace")
-                .limit(10)
+var observations = langfuse.observations().observationsGetMany(
+        ObservationsApi.APIObservationsGetManyRequest.newBuilder()
+                .traceId(traceId)
+                .fields("core,basic,usage")
                 .build());
 
-traces.getData().forEach(trace ->
-        System.out.println(trace.getId() + ": " + trace.getName()));
+observations.getData().forEach(obs ->
+        System.out.println(obs.getId() + ": " + obs.getName()));
 ```
 
 ### Check health
@@ -118,7 +146,7 @@ traces.getData().forEach(trace ->
 ```java
 var health = langfuse.health().healthHealth();
 System.out.println("Status: " + health.getStatus());     // OK
-System.out.println("Version: " + health.getVersion());    // 3.x.x
+System.out.println("Version: " + health.getVersion());    // 4.x.x
 ```
 
 ### Async API
@@ -191,6 +219,80 @@ See the [testcontainers module README](langfuse-java-testcontainers/) for config
 ```bash
 ./mvnw clean verify
 ```
+
+## Migrating from Langfuse v3 to v4
+
+This SDK was updated from Langfuse v3 to v4 (`events_only` write mode). If you are upgrading from a v3-based version, the following changes apply.
+
+### Infrastructure
+
+The Langfuse container images have been updated:
+
+| Component | v3 | v4 |
+|---|---|---|
+| Langfuse Web | `langfuse/langfuse:3` | `langfuse/langfuse:4` |
+| Langfuse Worker | `langfuse/langfuse-worker:3` | `langfuse/langfuse-worker:4` |
+| ClickHouse | `clickhouse/clickhouse-server` (untagged) | `clickhouse/clickhouse-server:25.12` (minimum) |
+
+Langfuse v4 requires ClickHouse 25.12+, PostgreSQL 15+, and Redis 7.0+.
+
+### Ingestion: legacy batch API replaced by OpenTelemetry
+
+The legacy batch ingestion endpoint (`POST /api/public/ingestion` with `TRACE_CREATE`, `SPAN_CREATE`, `GENERATION_CREATE`, etc.) returns **400** in `events_only` mode. All trace ingestion must use the OpenTelemetry endpoint:
+
+| v3 | v4 |
+|---|---|
+| `langfuse.ingestion().ingestionBatch(...)` | `langfuse.opentelemetry().opentelemetryExportTraces(...)` |
+
+Key differences in the OTel format:
+- **Trace IDs** are 32-character hex strings (no dashes): `UUID.randomUUID().toString().replace("-", "")`
+- **Span IDs** are 16-character hex strings: `traceId.substring(0, 16)`
+- **Timestamps** are nanoseconds since epoch as strings: `String.valueOf(System.currentTimeMillis() * 1_000_000L)`
+- **Trace metadata** (name, user ID, session ID) is set via OTel resource attributes prefixed with `langfuse.trace.`:
+  - `langfuse.trace.name` -- trace name
+  - `langfuse.trace.user.id` -- user ID
+  - `langfuse.trace.session.id` -- session ID
+
+### Read APIs: legacy endpoints replaced by v2/v3
+
+Several legacy read endpoints return **404** in `events_only` mode. Use the v4 replacements:
+
+| Legacy Endpoint (404 in v4) | v4 Replacement |
+|---|---|
+| `trace().traceGet(...)` / `traceList(...)` | `observations().observationsGetMany(...)` (v2, with `traceId` filter) |
+| `sessions().sessionsGet(...)` / `sessionsList(...)` | `observations().observationsGetMany(...)` (v2, with `traceId` filter) |
+| `scores().scoresGetMany(...)` (v2) | `scoresV3().scoresV3GetManyV3(...)` |
+| `legacyObservationsV1().legacyObservationsV1GetMany(...)` | `observations().observationsGetMany(...)` (v2) |
+| `legacyMetricsV1().legacyMetricsV1Metrics(...)` | `metrics().metricsGetMany(...)` (v2) |
+
+The v2 observations endpoint uses cursor-based pagination (not page-based) and supports field selection via the `fields` parameter (`core`, `basic`, `time`, `io`, `metadata`, `model`, `usage`, `prompt`, `metrics`, `trace_context`).
+
+### Score creation: renamed types
+
+The score creation API was re-tagged from `LegacyScoreV1` to `Scores`, and the request/response types were renamed:
+
+| v3 | v4 |
+|---|---|
+| `LegacyCreateScoreRequest` | `CreateScoreRequest` |
+| `LegacyCreateScoreSource` | `CreateScoreSource` |
+| `LegacyCreateScoreResponse` | `CreateScoreResponse` |
+| `legacyScoreV1().legacyScoreV1Create(...)` | `scores().scoresCreate(...)` |
+
+### New APIs in v4
+
+The following API groups are new in v4:
+
+| API | Accessor | Description |
+|---|---|---|
+| Experiments | `experiments()` | List experiments and experiment items |
+| Feedback | `feedback()` | Submit feedback (cloud-hosted only) |
+| Scores V3 | `scoresV3()` | Query scores with polymorphic `value` field and cursor pagination |
+| Unstable Dashboards | `unstableDashboards()` | CRUD for custom dashboards |
+| Unstable Dashboard Widgets | `unstableDashboardWidgets()` | CRUD for dashboard widgets |
+
+### OpenAPI spec: `const` keyword incompatibility
+
+The v4 OpenAPI spec uses the JSON Schema `const` keyword in the `unstableCodeEvaluationRuleEvaluatorReference` schema. This keyword is not supported by [openapi-generator](https://openapi-generator.tech/), so spec validation is disabled (`<skipValidateSpec>true</skipValidateSpec>`) in the Maven plugin configuration. The `const` keyword is silently ignored during code generation -- the generated field is typed as a plain `String` rather than a single-value enum. This does not affect runtime behavior since the server enforces the constraint.
 
 ## License
 

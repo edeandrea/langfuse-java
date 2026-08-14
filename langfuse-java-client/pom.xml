@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.jspecify</groupId>
             <artifactId>jspecify</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>
@@ -107,6 +107,7 @@
                             <generatorName>java</generatorName>
                             <templateResourcePath>${project.basedir}/src/main/templates</templateResourcePath>
                             <cleanupOutput>true</cleanupOutput>
+                            <skipValidateSpec>true</skipValidateSpec>
                             <generateModels>false</generateModels>
                             <generateSupportingFiles>true</generateSupportingFiles>
                             <supportingFilesToGenerate>ApiClient.java,ApiResponse.java,Pair.java</supportingFilesToGenerate>
@@ -144,6 +145,7 @@
                             <templateResourcePath>${project.basedir}/src/main/templates</templateResourcePath>
                             <output>${project.build.directory}/generated-sources/openapi-async</output>
                             <cleanupOutput>true</cleanupOutput>
+                            <skipValidateSpec>true</skipValidateSpec>
                             <generateModels>false</generateModels>
                             <generateSupportingFiles>false</generateSupportingFiles>
                             <generateApiTests>false</generateApiTests>
@@ -174,7 +176,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <executions>
                     <execution>
                         <id>fix-generic-type-references</id>

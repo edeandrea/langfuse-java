@@ -12,7 +12,11 @@ import org.junit.jupiter.api.TestMethodOrder;
 import com.langfuse.api.model.CreateScoreConfigRequest;
 import com.langfuse.api.model.ScoreConfig;
 import com.langfuse.api.model.ScoreConfigDataType;
-import com.langfuse.api.scoreConfigs.ScoreConfigsApi;
+import com.langfuse.api.model.UpdateScoreConfigRequest;
+import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsCreateRequest;
+import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsGetByIdRequest;
+import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsGetRequest;
+import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsUpdateRequest;
 
 /**
  * Integration tests for the Score Configs API.
@@ -29,7 +33,7 @@ class ScoreConfigsApiTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createNumericScoreConfig() {
         assertThat(client.scoreConfigs().scoreConfigsCreate(
-                ScoreConfigsApi.APIScoreConfigsCreateRequest.newBuilder()
+                APIScoreConfigsCreateRequest.newBuilder()
                         .createScoreConfigRequest(CreateScoreConfigRequest.builder()
                                 .name(CONFIG_NAME)
                                 .dataType(ScoreConfigDataType.NUMERIC)
@@ -53,7 +57,7 @@ class ScoreConfigsApiTest extends AbstractLangfuseClientTest {
     @Order(2)
     void getScoreConfigById() {
         assertThat(client.scoreConfigs().scoreConfigsGetById(
-                ScoreConfigsApi.APIScoreConfigsGetByIdRequest.newBuilder()
+                APIScoreConfigsGetByIdRequest.newBuilder()
                         .configId(configId)
                         .build()))
                 .extracting(ScoreConfig::getId, ScoreConfig::getName, ScoreConfig::getMinValue, ScoreConfig::getMaxValue, ScoreConfig::getDataType)
@@ -64,13 +68,31 @@ class ScoreConfigsApiTest extends AbstractLangfuseClientTest {
     @Order(2)
     void listScoreConfigs() {
         assertThat(client.scoreConfigs().scoreConfigsGet(
-                ScoreConfigsApi.APIScoreConfigsGetRequest.newBuilder()
+                APIScoreConfigsGetRequest.newBuilder()
                         .build()))
                 .satisfies(configs -> {
                     assertThat(configs.getData())
                             .isNotEmpty()
                             .anyMatch(c -> CONFIG_NAME.equals(c.getName()));
                     assertThat(configs.getMeta().getTotalItems()).isGreaterThan(0);
+                });
+    }
+
+    @Test
+    @Order(3)
+    void updateScoreConfig() {
+        assertThat(client.scoreConfigs().scoreConfigsUpdate(
+                APIScoreConfigsUpdateRequest.newBuilder()
+                        .configId(configId)
+                        .updateScoreConfigRequest(UpdateScoreConfigRequest.builder()
+                                .description("Updated description")
+                                .isArchived(true)
+                                .build())
+                        .build()))
+                .satisfies(config -> {
+                    assertThat(config.getId()).isEqualTo(configId);
+                    assertThat(config.getDescription()).isEqualTo("Updated description");
+                    assertThat(config.getIsArchived()).isTrue();
                 });
     }
 }

@@ -14,8 +14,9 @@ import com.langfuse.api.model.CreatePromptRequest;
 import com.langfuse.api.model.CreateTextPromptRequest;
 import com.langfuse.api.model.CreateTextPromptType;
 import com.langfuse.api.model.PromptVersionUpdateRequest;
-import com.langfuse.api.promptVersion.PromptVersionApi;
-import com.langfuse.api.prompts.PromptsApi;
+import com.langfuse.api.promptVersion.PromptVersionApi.APIPromptVersionUpdateRequest;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsCreateRequest;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsGetRequest;
 
 /**
  * Integration tests for the Prompt Version API.
@@ -31,7 +32,7 @@ class PromptVersionApiTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createPrompt() {
         assertThat(client.prompts().promptsCreate(
-                PromptsApi.APIPromptsCreateRequest.newBuilder()
+                APIPromptsCreateRequest.newBuilder()
                         .createPromptRequest(new CreatePromptRequest(
                                 CreateTextPromptRequest.builder()
                                         .name(PROMPT_NAME)
@@ -47,7 +48,7 @@ class PromptVersionApiTest extends AbstractLangfuseClientTest {
     @Order(2)
     void updatePromptVersion() {
         assertThat(client.promptVersion().promptVersionUpdate(
-                PromptVersionApi.APIPromptVersionUpdateRequest.newBuilder()
+                APIPromptVersionUpdateRequest.newBuilder()
                         .name(PROMPT_NAME)
                         .version(1)
                         .promptVersionUpdateRequest(PromptVersionUpdateRequest.builder()
@@ -61,7 +62,7 @@ class PromptVersionApiTest extends AbstractLangfuseClientTest {
     @Order(3)
     void fetchUpdatedPromptVersion() {
         assertThat(client.prompts().promptsGet(
-                PromptsApi.APIPromptsGetRequest.newBuilder()
+                APIPromptsGetRequest.newBuilder()
                         .promptName(PROMPT_NAME)
                         .label("production")
                         .build()))

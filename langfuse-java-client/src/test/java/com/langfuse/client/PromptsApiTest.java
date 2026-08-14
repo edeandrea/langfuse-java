@@ -17,7 +17,10 @@ import com.langfuse.api.model.CreateChatPromptType;
 import com.langfuse.api.model.CreatePromptRequest;
 import com.langfuse.api.model.CreateTextPromptRequest;
 import com.langfuse.api.model.CreateTextPromptType;
-import com.langfuse.api.prompts.PromptsApi;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsCreateRequest;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsDeleteRequest;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsGetRequest;
+import com.langfuse.api.prompts.PromptsApi.APIPromptsListRequest;
 
 /**
  * Integration tests for the Prompts API.
@@ -34,7 +37,7 @@ class PromptsApiTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createTextPrompt() {
         var prompt = client.prompts().promptsCreate(
-                PromptsApi.APIPromptsCreateRequest.newBuilder()
+                APIPromptsCreateRequest.newBuilder()
                         .createPromptRequest(new CreatePromptRequest(
                                 CreateTextPromptRequest.builder()
                                         .name(TEXT_PROMPT_NAME)
@@ -53,7 +56,7 @@ class PromptsApiTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createChatPrompt() {
         var prompt = client.prompts().promptsCreate(
-                PromptsApi.APIPromptsCreateRequest.newBuilder()
+                APIPromptsCreateRequest.newBuilder()
                         .createPromptRequest(new CreatePromptRequest(
                                 CreateChatPromptRequest.builder()
                                         .name(CHAT_PROMPT_NAME)
@@ -76,7 +79,7 @@ class PromptsApiTest extends AbstractLangfuseClientTest {
     @Order(2)
     void fetchTextPrompt() {
         var prompt = client.prompts().promptsGet(
-                PromptsApi.APIPromptsGetRequest.newBuilder()
+                APIPromptsGetRequest.newBuilder()
                         .promptName(TEXT_PROMPT_NAME)
                         .build());
 
@@ -89,7 +92,7 @@ class PromptsApiTest extends AbstractLangfuseClientTest {
     @Order(2)
     void fetchChatPrompt() {
         var prompt = client.prompts().promptsGet(
-                PromptsApi.APIPromptsGetRequest.newBuilder()
+                APIPromptsGetRequest.newBuilder()
                         .promptName(CHAT_PROMPT_NAME)
                         .build());
 
@@ -102,7 +105,7 @@ class PromptsApiTest extends AbstractLangfuseClientTest {
     @Order(2)
     void listPromptsContainsCreatedPrompts() {
         var prompts = client.prompts().promptsList(
-                PromptsApi.APIPromptsListRequest.newBuilder()
+                APIPromptsListRequest.newBuilder()
                         .build());
 
         assertThat(prompts.getData())
@@ -114,5 +117,14 @@ class PromptsApiTest extends AbstractLangfuseClientTest {
         assertThat(prompts.getData())
                 .anyMatch(p -> TEXT_PROMPT_NAME.equals(p.getName()))
                 .anyMatch(p -> CHAT_PROMPT_NAME.equals(p.getName()));
+    }
+
+    @Test
+    @Order(3)
+    void deletePrompt() {
+        client.prompts().promptsDelete(
+                APIPromptsDeleteRequest.newBuilder()
+                        .promptName(TEXT_PROMPT_NAME)
+                        .build());
     }
 }

@@ -6,7 +6,6 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
 
-
 /**
  * Async integration tests for the Health API.
  *

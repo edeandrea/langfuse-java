@@ -10,11 +10,14 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import com.langfuse.api.datasetItems.DatasetItemsApi;
-import com.langfuse.api.datasets.DatasetsApi;
+import com.langfuse.api.datasetItems.DatasetItemsApi.APIDatasetItemsCreateRequest;
+import com.langfuse.api.datasetItems.DatasetItemsApi.APIDatasetItemsDeleteRequest;
+import com.langfuse.api.datasetItems.DatasetItemsApi.APIDatasetItemsGetRequest;
+import com.langfuse.api.datasetItems.DatasetItemsApi.APIDatasetItemsListRequest;
+import com.langfuse.api.datasets.DatasetsApi.APIDatasetsCreateRequest;
 import com.langfuse.api.model.CreateDatasetItemRequest;
-import com.langfuse.api.model.DatasetItem;
 import com.langfuse.api.model.CreateDatasetRequest;
+import com.langfuse.api.model.DatasetItem;
 
 /**
  * Integration tests for the Dataset Items API.
@@ -31,7 +34,7 @@ class DatasetItemsApiTest extends AbstractLangfuseClientTest {
     @Order(1)
     void createDatasetAndItem() {
         var dataset = client.datasets().datasetsCreate(
-                DatasetsApi.APIDatasetsCreateRequest.newBuilder()
+                APIDatasetsCreateRequest.newBuilder()
                         .createDatasetRequest(CreateDatasetRequest.builder()
                                 .name(DATASET_NAME)
                                 .build())
@@ -40,7 +43,7 @@ class DatasetItemsApiTest extends AbstractLangfuseClientTest {
         assertThat(dataset.getName()).isEqualTo(DATASET_NAME);
 
         assertThat(client.datasetItems().datasetItemsCreate(
-                DatasetItemsApi.APIDatasetItemsCreateRequest.newBuilder()
+                APIDatasetItemsCreateRequest.newBuilder()
                         .createDatasetItemRequest(CreateDatasetItemRequest.builder()
                                 .datasetName(DATASET_NAME)
                                 .input(Map.of("question", "What is Java?"))
@@ -59,7 +62,7 @@ class DatasetItemsApiTest extends AbstractLangfuseClientTest {
     @Order(2)
     void getDatasetItem() {
         assertThat(client.datasetItems().datasetItemsGet(
-                DatasetItemsApi.APIDatasetItemsGetRequest.newBuilder()
+                APIDatasetItemsGetRequest.newBuilder()
                         .id(datasetItemId)
                         .build()))
                 .satisfies(item -> {
@@ -75,7 +78,7 @@ class DatasetItemsApiTest extends AbstractLangfuseClientTest {
     @Order(2)
     void listDatasetItems() {
         var items = client.datasetItems().datasetItemsList(
-                DatasetItemsApi.APIDatasetItemsListRequest.newBuilder()
+                APIDatasetItemsListRequest.newBuilder()
                         .datasetName(DATASET_NAME)
                         .build());
 
@@ -87,5 +90,16 @@ class DatasetItemsApiTest extends AbstractLangfuseClientTest {
 
         assertThat(items.getMeta().getTotalItems())
                 .isEqualTo(1);
+    }
+
+    @Test
+    @Order(3)
+    void deleteDatasetItem() {
+        assertThat(client.datasetItems().datasetItemsDelete(
+                APIDatasetItemsDeleteRequest.newBuilder()
+                        .id(datasetItemId)
+                        .build()))
+                .satisfies(response ->
+                        assertThat(response.getMessage()).isNotBlank());
     }
 }

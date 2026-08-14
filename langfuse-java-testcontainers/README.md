@@ -20,11 +20,11 @@
 | Service | Default Image | Purpose |
 |---------|--------------|---------|
 | PostgreSQL | `postgres:17` | Primary database |
-| ClickHouse | `clickhouse/clickhouse-server` | Analytics data store |
+| ClickHouse | `clickhouse/clickhouse-server:25.12` | Analytics data store |
 | Redis | `redis:7` | Queue and cache |
 | MinIO | `cgr.dev/chainguard/minio` | S3-compatible object storage |
-| Langfuse Web | `langfuse/langfuse:3` | API server |
-| Langfuse Worker | `langfuse/langfuse-worker:3` | Async event processing |
+| Langfuse Web | `langfuse/langfuse:4` | API server |
+| Langfuse Worker | `langfuse/langfuse-worker:4` | Async event processing |
 
 Infrastructure containers start in parallel, then the web server and worker start in parallel after infrastructure is ready.
 
@@ -81,7 +81,7 @@ Customize the environment using the builder API:
 var langfuse = new LangfuseContainer(
         LangfuseContainerConfig.builder()
                 .langfuse()
-                    .image("docker.io/langfuse/langfuse:3")
+                    .image("docker.io/langfuse/langfuse:4")
                     .port(3000)
                     .startupTimeout(Duration.ofMinutes(5))
                     .initProjectPublicKey("my-public-key")
@@ -118,13 +118,13 @@ All defaults are aligned with the project's `docker-compose.yml`:
 
 | Setting | Default |
 |---------|---------|
-| Langfuse image | `docker.io/langfuse/langfuse:3` |
+| Langfuse image | `docker.io/langfuse/langfuse:4` |
 | Langfuse port | `3000` |
 | Startup timeout | 3 minutes |
 | Public key | `pk-lf-dev` |
 | Secret key | `sk-lf-dev` |
 | PostgreSQL | `postgres:17`, user/pass `postgres/postgres` |
-| ClickHouse | `clickhouse/clickhouse-server`, user/pass `clickhouse/clickhouse` |
+| ClickHouse | `clickhouse/clickhouse-server:25.12`, user/pass `clickhouse/clickhouse` |
 | Redis | `redis:7`, password `myredissecret` |
 | MinIO | `cgr.dev/chainguard/minio`, user/pass `minio/miniosecret` |
 
