@@ -22,7 +22,7 @@ import com.langfuse.api.organizations.OrganizationsApi.APIOrganizationsUpdatePro
  * @author Eric Deandrea
  */
 @Disabled("Requires org-admin role")
-class OrganizationsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class OrganizationsApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void listOrganizationApiKeys() {

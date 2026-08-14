@@ -33,9 +33,9 @@ import com.langfuse.api.unstableDashboards.UnstableDashboardsApi.APIUnstableDash
 import com.langfuse.api.unstableDashboards.UnstableDashboardsApi.APIUnstableDashboardsUpdateRequest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UnstableDashboardsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class UnstableDashboardsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String DASHBOARD_NAME = "async-test-dashboard-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String DASHBOARD_NAME = "async-test-dashboard-" + UUID.randomUUID().toString().substring(0, 8);
     private static String dashboardId;
     private static String widgetId;
     private static String placementId;

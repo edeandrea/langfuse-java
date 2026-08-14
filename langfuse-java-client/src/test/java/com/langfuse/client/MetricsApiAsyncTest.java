@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.langfuse.api.metrics.MetricsApi.APIMetricsMetricsRequest;
 
-class MetricsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class MetricsApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void queryObservationCount() {

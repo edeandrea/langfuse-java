@@ -16,7 +16,7 @@ import com.langfuse.api.model.SubmitFeedbackRequest;
  *
  * @author Eric Deandrea
  */
-class FeedbackApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class FeedbackApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void submitFeedback() {

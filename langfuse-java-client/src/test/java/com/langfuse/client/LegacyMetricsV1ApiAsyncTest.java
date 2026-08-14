@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.langfuse.api.LangfuseApiException;
 import com.langfuse.api.legacyMetricsV1.LegacyMetricsV1Api.APILegacyMetricsV1MetricsRequest;
 
-class LegacyMetricsV1ApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class LegacyMetricsV1ApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void legacyMetricsReturns404InEventsOnlyMode() {

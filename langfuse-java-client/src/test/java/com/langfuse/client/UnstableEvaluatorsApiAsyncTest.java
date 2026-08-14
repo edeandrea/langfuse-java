@@ -19,7 +19,7 @@ import com.langfuse.api.unstableEvaluators.UnstableEvaluatorsApi.APIUnstableEval
  *
  * @author Eric Deandrea
  */
-class UnstableEvaluatorsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class UnstableEvaluatorsApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void listEvaluators() {

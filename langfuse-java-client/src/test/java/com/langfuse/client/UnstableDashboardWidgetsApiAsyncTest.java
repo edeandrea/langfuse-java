@@ -25,9 +25,9 @@ import com.langfuse.api.unstableDashboardWidgets.UnstableDashboardWidgetsApi.API
 import com.langfuse.api.unstableDashboardWidgets.UnstableDashboardWidgetsApi.APIUnstableDashboardWidgetsUpdateRequest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UnstableDashboardWidgetsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class UnstableDashboardWidgetsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String WIDGET_NAME = "async-test-widget-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String WIDGET_NAME = "async-test-widget-" + UUID.randomUUID().toString().substring(0, 8);
     private static String widgetId;
 
     @Test

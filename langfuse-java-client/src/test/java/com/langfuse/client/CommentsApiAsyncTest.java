@@ -24,10 +24,10 @@ import com.langfuse.api.model.CreateCommentRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class CommentsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class CommentsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
-    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
+    private final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private final String SPAN_ID = TRACE_ID.substring(0, 16);
     private static String commentId;
 
     @Test

@@ -24,7 +24,7 @@ import com.langfuse.api.scim.ScimApi.APIScimListUsersRequest;
  */
 @Disabled("Requires org-admin role")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ScimApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class ScimApiAsyncTest extends AbstractLangfuseClientTest {
 
     private static String userId;
 

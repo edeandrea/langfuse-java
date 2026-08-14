@@ -27,10 +27,10 @@ import com.langfuse.api.scores.ScoresApi.APIScoresCreateRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class LegacyScoreV1ApiTest extends AbstractLangfuseClientTest {
+abstract class LegacyScoreV1ApiTest extends AbstractLangfuseClientTest {
 
-    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
-    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
+    private final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private final String SPAN_ID = TRACE_ID.substring(0, 16);
     private static String scoreId;
 
     @Test

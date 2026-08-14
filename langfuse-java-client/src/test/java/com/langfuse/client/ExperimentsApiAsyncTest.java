@@ -27,13 +27,13 @@ import com.langfuse.api.model.CreateDatasetRunItemRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ExperimentsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class ExperimentsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final OffsetDateTime TEST_START = OffsetDateTime.now();
-    private static final String DATASET_NAME = "async-test-experiments-dataset-" + UUID.randomUUID();
-    private static final String RUN_NAME = "async-test-experiment-run-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
-    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
+    private final OffsetDateTime TEST_START = OffsetDateTime.now();
+    private final String DATASET_NAME = "async-test-experiments-dataset-" + UUID.randomUUID();
+    private final String RUN_NAME = "async-test-experiment-run-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private final String SPAN_ID = TRACE_ID.substring(0, 16);
     private static String datasetItemId;
 
     @Test

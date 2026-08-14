@@ -29,10 +29,10 @@ import com.langfuse.api.prompts.PromptsApi.APIPromptsListRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class PromptsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class PromptsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String TEXT_PROMPT_NAME = "async-test-text-prompt-" + UUID.randomUUID();
-    private static final String CHAT_PROMPT_NAME = "async-test-chat-prompt-" + UUID.randomUUID();
+    private final String TEXT_PROMPT_NAME = "async-test-text-prompt-" + UUID.randomUUID();
+    private final String CHAT_PROMPT_NAME = "async-test-chat-prompt-" + UUID.randomUUID();
 
     @Test
     @Order(1)

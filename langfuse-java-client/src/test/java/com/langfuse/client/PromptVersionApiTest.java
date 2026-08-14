@@ -24,9 +24,9 @@ import com.langfuse.api.prompts.PromptsApi.APIPromptsGetRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class PromptVersionApiTest extends AbstractLangfuseClientTest {
+abstract class PromptVersionApiTest extends AbstractLangfuseClientTest {
 
-    private static final String PROMPT_NAME = "test-prompt-version-" + UUID.randomUUID();
+    private final String PROMPT_NAME = "test-prompt-version-" + UUID.randomUUID();
 
     @Test
     @Order(1)

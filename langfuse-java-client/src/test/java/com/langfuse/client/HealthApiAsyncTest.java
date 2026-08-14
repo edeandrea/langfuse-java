@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Eric Deandrea
  */
-class HealthApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class HealthApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void healthEndpointReturnsOk() {

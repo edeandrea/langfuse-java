@@ -37,9 +37,9 @@ import com.langfuse.api.unstableDashboards.UnstableDashboardsApi.APIUnstableDash
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UnstableDashboardsApiTest extends AbstractLangfuseClientTest {
+abstract class UnstableDashboardsApiTest extends AbstractLangfuseClientTest {
 
-    private static final String DASHBOARD_NAME = "test-dashboard-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String DASHBOARD_NAME = "test-dashboard-" + UUID.randomUUID().toString().substring(0, 8);
     private static String dashboardId;
     private static String widgetId;
     private static String placementId;

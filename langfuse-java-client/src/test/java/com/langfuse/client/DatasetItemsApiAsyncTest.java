@@ -25,9 +25,9 @@ import com.langfuse.api.model.CreateDatasetRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class DatasetItemsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class DatasetItemsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String DATASET_NAME = "async-test-dataset-items-" + UUID.randomUUID();
+    private final String DATASET_NAME = "async-test-dataset-items-" + UUID.randomUUID();
     private static String datasetItemId;
 
     @Test

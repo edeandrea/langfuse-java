@@ -18,7 +18,7 @@ import com.langfuse.api.legacyObservationsV1.LegacyObservationsV1Api.APILegacyOb
  *
  * @author Eric Deandrea
  */
-class LegacyObservationsV1ApiTest extends AbstractLangfuseClientTest {
+abstract class LegacyObservationsV1ApiTest extends AbstractLangfuseClientTest {
 
     @Test
     void legacyGetObservationReturns404InEventsOnlyMode() {

@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Eric Deandrea
  */
-class ProjectsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class ProjectsApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void getProjects() {

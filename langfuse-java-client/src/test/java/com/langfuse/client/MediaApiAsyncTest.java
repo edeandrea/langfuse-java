@@ -20,10 +20,10 @@ import com.langfuse.api.model.MediaContentType;
 import com.langfuse.api.model.PatchMediaBody;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class MediaApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class MediaApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
-    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
+    private final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private final String SPAN_ID = TRACE_ID.substring(0, 16);
     private static String mediaId;
 
     @Test

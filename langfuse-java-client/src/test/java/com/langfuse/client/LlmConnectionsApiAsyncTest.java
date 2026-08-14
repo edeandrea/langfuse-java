@@ -16,7 +16,7 @@ import com.langfuse.api.model.LlmAdapter;
 import com.langfuse.api.model.UpsertLlmConnectionRequest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class LlmConnectionsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class LlmConnectionsApiAsyncTest extends AbstractLangfuseClientTest {
 
     private static String connectionId;
 

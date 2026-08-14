@@ -22,7 +22,7 @@ import com.langfuse.api.opentelemetry.OpentelemetryApi.APIOpentelemetryExportTra
  *
  * @author Eric Deandrea
  */
-class OpentelemetryApiTest extends AbstractLangfuseClientTest {
+abstract class OpentelemetryApiTest extends AbstractLangfuseClientTest {
 
     @Test
     void exportTraces() {

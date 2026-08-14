@@ -20,7 +20,7 @@ import com.langfuse.api.model.CreateBlobStorageIntegrationRequest;
  */
 @Disabled("Requires org-admin role")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class BlobStorageIntegrationsApiTest extends AbstractLangfuseClientTest {
+abstract class BlobStorageIntegrationsApiTest extends AbstractLangfuseClientTest {
 
     private static String integrationId;
 

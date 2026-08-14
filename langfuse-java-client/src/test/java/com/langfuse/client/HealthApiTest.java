@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author Eric Deandrea
  */
-class HealthApiTest extends AbstractLangfuseClientTest {
+abstract class HealthApiTest extends AbstractLangfuseClientTest {
 
     @Test
     void healthEndpointReturnsOk() {

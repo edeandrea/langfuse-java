@@ -20,9 +20,9 @@ import com.langfuse.api.prompts.PromptsApi.APIPromptsCreateRequest;
 import com.langfuse.api.prompts.PromptsApi.APIPromptsGetRequest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class PromptVersionApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class PromptVersionApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String PROMPT_NAME = "async-test-prompt-version-" + UUID.randomUUID();
+    private final String PROMPT_NAME = "async-test-prompt-version-" + UUID.randomUUID();
 
     @Test
     @Order(1)

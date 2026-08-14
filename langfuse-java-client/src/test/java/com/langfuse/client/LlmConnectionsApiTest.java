@@ -19,7 +19,7 @@ import com.langfuse.api.model.UpsertLlmConnectionRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class LlmConnectionsApiTest extends AbstractLangfuseClientTest {
+abstract class LlmConnectionsApiTest extends AbstractLangfuseClientTest {
 
     private static String connectionId;
 

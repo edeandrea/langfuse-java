@@ -26,11 +26,11 @@ import com.langfuse.api.sessions.SessionsApi.APISessionsListRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class SessionsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class SessionsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String SESSION_ID = "async-test-session-" + UUID.randomUUID();
-    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
-    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
+    private final String SESSION_ID = "async-test-session-" + UUID.randomUUID();
+    private final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private final String SPAN_ID = TRACE_ID.substring(0, 16);
 
     @Test
     void sessionsGetReturns404InEventsOnlyMode() {

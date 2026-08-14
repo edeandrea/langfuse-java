@@ -24,7 +24,7 @@ import com.langfuse.api.model.TraceBody;
  *
  * @author Eric Deandrea
  */
-class IngestionApiTest extends AbstractLangfuseClientTest {
+abstract class IngestionApiTest extends AbstractLangfuseClientTest {
 
     @Test
     void traceCreateReturnsErrorInEventsOnlyMode() {

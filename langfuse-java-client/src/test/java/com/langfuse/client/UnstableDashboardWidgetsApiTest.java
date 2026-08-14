@@ -29,9 +29,9 @@ import com.langfuse.api.unstableDashboardWidgets.UnstableDashboardWidgetsApi.API
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UnstableDashboardWidgetsApiTest extends AbstractLangfuseClientTest {
+abstract class UnstableDashboardWidgetsApiTest extends AbstractLangfuseClientTest {
 
-    private static final String WIDGET_NAME = "test-widget-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String WIDGET_NAME = "test-widget-" + UUID.randomUUID().toString().substring(0, 8);
     private static String widgetId;
 
     @Test

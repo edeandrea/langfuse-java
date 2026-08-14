@@ -23,12 +23,12 @@ import com.langfuse.api.observations.ObservationsApi.APIObservationsGetManyReque
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ObservationsApiTest extends AbstractLangfuseClientTest {
+abstract class ObservationsApiTest extends AbstractLangfuseClientTest {
 
-    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
-    private static final String ROOT_SPAN_ID = TRACE_ID.substring(0, 16);
-    private static final String CHILD_SPAN_ID = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
-    private static final String CHILD_SPAN_NAME = "observations-test-span-" + UUID.randomUUID();
+    private final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private final String ROOT_SPAN_ID = TRACE_ID.substring(0, 16);
+    private final String CHILD_SPAN_ID = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+    private final String CHILD_SPAN_NAME = "observations-test-span-" + UUID.randomUUID();
 
     @Test
     @Order(1)

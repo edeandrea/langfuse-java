@@ -11,7 +11,7 @@ import com.langfuse.api.metrics.MetricsApi.APIMetricsMetricsRequest;
  *
  * @author Eric Deandrea
  */
-class MetricsApiTest extends AbstractLangfuseClientTest {
+abstract class MetricsApiTest extends AbstractLangfuseClientTest {
 
     @Test
     void queryObservationCount() {

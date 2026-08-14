@@ -24,9 +24,9 @@ import com.langfuse.api.models.ModelsApi.APIModelsListRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ModelsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class ModelsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String MODEL_NAME = "async-model-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String MODEL_NAME = "async-model-" + UUID.randomUUID().toString().substring(0, 8);
     private static String modelId;
 
     @Test

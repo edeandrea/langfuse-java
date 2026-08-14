@@ -25,9 +25,9 @@ import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsUpdateReques
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ScoreConfigsApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class ScoreConfigsApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String CONFIG_NAME = "async-cfg-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String CONFIG_NAME = "async-cfg-" + UUID.randomUUID().toString().substring(0, 8);
     private static String configId;
 
     @Test

@@ -21,11 +21,11 @@ import com.langfuse.api.scores.ScoresApi.APIScoresCreateRequest;
 import com.langfuse.api.scoresV3.ScoresV3Api.APIScoresV3GetManyV3Request;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ScoresV3ApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class ScoresV3ApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
-    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
-    private static final String SCORE_NAME = "async-v3-score-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private final String SPAN_ID = TRACE_ID.substring(0, 16);
+    private final String SCORE_NAME = "async-v3-score-" + UUID.randomUUID().toString().substring(0, 8);
 
     @Test
     @Order(1)

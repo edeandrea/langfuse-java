@@ -18,7 +18,7 @@ import com.langfuse.api.unstableEvaluationRules.UnstableEvaluationRulesApi.APIUn
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UnstableEvaluationRulesApiTest extends AbstractLangfuseClientTest {
+abstract class UnstableEvaluationRulesApiTest extends AbstractLangfuseClientTest {
 
     private static String evaluationRuleId;
 

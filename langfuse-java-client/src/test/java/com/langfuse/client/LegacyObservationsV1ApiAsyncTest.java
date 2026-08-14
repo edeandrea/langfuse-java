@@ -11,7 +11,7 @@ import com.langfuse.api.LangfuseApiException;
 import com.langfuse.api.legacyObservationsV1.LegacyObservationsV1Api.APILegacyObservationsV1GetManyRequest;
 import com.langfuse.api.legacyObservationsV1.LegacyObservationsV1Api.APILegacyObservationsV1GetRequest;
 
-class LegacyObservationsV1ApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class LegacyObservationsV1ApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void legacyGetObservationReturns404InEventsOnlyMode() {

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.extension.TestWatcher;
@@ -33,20 +35,43 @@ import com.langfuse.testcontainers.LangfuseContainer;
  * {@link LangfuseContainer} instance that is shared across all test classes.
  * The container starts once per JVM and is cleaned up automatically by Ryuk.
  *
+ * <p>Subclasses must implement {@link #createClient()} to select the Jackson version.
+ * Two shared client instances (Jackson 2 and Jackson 3) are available via
+ * {@link #jackson2Client()} and {@link #jackson3Client()}.
+ *
  * @author Eric Deandrea
  * @see <a href="https://testcontainers.com/guides/testcontainers-container-lifecycle/#_using_singleton_containers">Singleton Containers</a>
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 abstract class AbstractLangfuseClientTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLangfuseClientTest.class);
 
     static LangfuseContainer langfuse = new LangfuseContainer();
-    static LangfuseApi client;
+    private static LangfuseApi jackson2Client;
+    private static LangfuseApi jackson3Client;
 
     static {
         langfuse.start();
+        jackson2Client = createJackson2Client();
+        jackson3Client = createJackson3Client();
+    }
+
+    LangfuseApi client;
+
+    @BeforeAll
+    void initClient() {
         client = createClient();
     }
+
+    /**
+     * Returns the {@link LangfuseApi} client to use for this test class.
+     * Concrete subclasses select the Jackson version by returning either
+     * {@link #jackson2Client()} or {@link #jackson3Client()}.
+     *
+     * @return the client instance
+     */
+    abstract LangfuseApi createClient();
 
     @RegisterExtension
     TestWatcher watcher = new TestWatcher() {
@@ -69,7 +94,7 @@ abstract class AbstractLangfuseClientTest {
      * @param spanId    16-char hex span ID
      * @param traceName the trace name (set as {@code langfuse.trace.name} resource attribute)
      */
-    static void ingestTrace(String traceId, String spanId, String traceName) {
+    void ingestTrace(String traceId, String spanId, String traceName) {
         ingestTrace(traceId, spanId, traceName, Map.of());
     }
 
@@ -81,7 +106,7 @@ abstract class AbstractLangfuseClientTest {
      * @param traceName       the trace name (set as {@code langfuse.trace.name} resource attribute)
      * @param traceAttributes additional {@code langfuse.trace.*} attributes (e.g. {@code user.id}, {@code session.id})
      */
-    static void ingestTrace(String traceId, String spanId, String traceName, Map<String, String> traceAttributes) {
+    void ingestTrace(String traceId, String spanId, String traceName, Map<String, String> traceAttributes) {
         var nowNanos = String.valueOf(System.currentTimeMillis() * 1_000_000L);
 
         var span = OtelSpan.builder()
@@ -103,7 +128,7 @@ abstract class AbstractLangfuseClientTest {
      * @param traceAttributes additional {@code langfuse.trace.*} attributes
      * @param spans           one or more spans to include
      */
-    static void ingestTraceWithSpans(String traceName, Map<String, String> traceAttributes, OtelSpan... spans) {
+    void ingestTraceWithSpans(String traceName, Map<String, String> traceAttributes, OtelSpan... spans) {
         var attributes = new ArrayList<OtelAttribute>();
 
         attributes.add(OtelAttribute.builder()
@@ -145,12 +170,36 @@ abstract class AbstractLangfuseClientTest {
     }
 
     /**
-     * Creates a new {@link LangfuseApi} client configured to connect to the shared container.
+     * Returns the shared Jackson 2 client instance.
      *
-     * @return a configured client instance
+     * @return the Jackson 2 client
      */
-    static LangfuseApi createClient() {
-        return LangfuseApi.builder()
+    static LangfuseApi jackson2Client() {
+        return jackson2Client;
+    }
+
+    /**
+     * Returns the shared Jackson 3 client instance.
+     *
+     * @return the Jackson 3 client
+     */
+    static LangfuseApi jackson3Client() {
+        return jackson3Client;
+    }
+
+    private static LangfuseApi createJackson2Client() {
+        return LangfuseJackson2Client.builder()
+                .username(langfuse.getPublicKey())
+                .password(langfuse.getSecretKey())
+                .url(langfuse.getLangfuseUrl())
+                .logRequests()
+                .logResponses()
+                .prettyPrint()
+                .build();
+    }
+
+    private static LangfuseApi createJackson3Client() {
+        return LangfuseJackson3Client.builder()
                 .username(langfuse.getPublicKey())
                 .password(langfuse.getSecretKey())
                 .url(langfuse.getLangfuseUrl())

@@ -34,11 +34,11 @@ import com.langfuse.api.model.UpdateAnnotationQueueItemRequest;
 import com.langfuse.api.scoreConfigs.ScoreConfigsApi.APIScoreConfigsCreateRequest;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class AnnotationQueuesApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class AnnotationQueuesApiAsyncTest extends AbstractLangfuseClientTest {
 
-    private static final String QUEUE_NAME = "async-test-queue-" + UUID.randomUUID().toString().substring(0, 8);
-    private static final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
-    private static final String SPAN_ID = TRACE_ID.substring(0, 16);
+    private final String QUEUE_NAME = "async-test-queue-" + UUID.randomUUID().toString().substring(0, 8);
+    private final String TRACE_ID = UUID.randomUUID().toString().replace("-", "");
+    private final String SPAN_ID = TRACE_ID.substring(0, 16);
     private static String queueId;
     private static String queueItemId;
 

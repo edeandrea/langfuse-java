@@ -26,7 +26,7 @@ import com.langfuse.api.projects.ProjectsApi.APIProjectsUpdateRequest;
  * @author Eric Deandrea
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ProjectsApiTest extends AbstractLangfuseClientTest {
+abstract class ProjectsApiTest extends AbstractLangfuseClientTest {
 
     private static String createdProjectId;
     private static String apiKeyId;

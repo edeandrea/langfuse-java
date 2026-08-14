@@ -15,7 +15,7 @@ import com.langfuse.api.legacyMetricsV1.LegacyMetricsV1Api.APILegacyMetricsV1Met
  *
  * @author Eric Deandrea
  */
-class LegacyMetricsV1ApiTest extends AbstractLangfuseClientTest {
+abstract class LegacyMetricsV1ApiTest extends AbstractLangfuseClientTest {
 
     @Test
     void legacyMetricsReturns404InEventsOnlyMode() {

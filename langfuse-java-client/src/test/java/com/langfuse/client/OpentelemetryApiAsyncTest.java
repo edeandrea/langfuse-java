@@ -18,7 +18,7 @@ import com.langfuse.api.model.OtelScopeSpan;
 import com.langfuse.api.model.OtelSpan;
 import com.langfuse.api.opentelemetry.OpentelemetryApi.APIOpentelemetryExportTracesRequest;
 
-class OpentelemetryApiAsyncTest extends AbstractLangfuseClientTest {
+abstract class OpentelemetryApiAsyncTest extends AbstractLangfuseClientTest {
 
     @Test
     void exportTraces() {
