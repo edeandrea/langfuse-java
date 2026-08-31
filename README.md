@@ -284,6 +284,8 @@ The following API groups are new in v4:
 
 | API | Accessor | Description |
 |---|---|---|
+| Evaluators | `evaluators()` | CRUD for LLM-as-judge and code evaluators (v2) |
+| Evaluation Rules | `evaluationRules()` | CRUD for evaluation rule assignments (v2) |
 | Experiments | `experiments()` | List experiments and experiment items |
 | Feedback | `feedback()` | Submit feedback (cloud-hosted only) |
 | Scores V3 | `scoresV3()` | Query scores with polymorphic `value` field and cursor pagination |

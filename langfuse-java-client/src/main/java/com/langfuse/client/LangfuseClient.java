@@ -12,6 +12,8 @@ import com.langfuse.api.comments.CommentsApi;
 import com.langfuse.api.datasetItems.DatasetItemsApi;
 import com.langfuse.api.datasetRunItems.DatasetRunItemsApi;
 import com.langfuse.api.datasets.DatasetsApi;
+import com.langfuse.api.evaluationRules.EvaluationRulesApi;
+import com.langfuse.api.evaluators.EvaluatorsApi;
 import com.langfuse.api.experiments.ExperimentsApi;
 import com.langfuse.api.feedback.FeedbackApi;
 import com.langfuse.api.health.HealthApi;
@@ -65,6 +67,10 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
   private final com.langfuse.api.datasetRunItems.async.DatasetRunItemsApi asyncDatasetRunItemsApi;
   private final DatasetsApi datasetsApi;
   private final com.langfuse.api.datasets.async.DatasetsApi asyncDatasetsApi;
+  private final EvaluationRulesApi evaluationRulesApi;
+  private final com.langfuse.api.evaluationRules.async.EvaluationRulesApi asyncEvaluationRulesApi;
+  private final EvaluatorsApi evaluatorsApi;
+  private final com.langfuse.api.evaluators.async.EvaluatorsApi asyncEvaluatorsApi;
   private final ExperimentsApi experimentsApi;
   private final com.langfuse.api.experiments.async.ExperimentsApi asyncExperimentsApi;
   private final FeedbackApi feedbackApi;
@@ -158,6 +164,10 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
     this.asyncDatasetRunItemsApi = new com.langfuse.client.datasetRunItems.async.DatasetRunItemsApi(this);
     this.datasetsApi = new com.langfuse.client.datasets.DatasetsApi(this);
     this.asyncDatasetsApi = new com.langfuse.client.datasets.async.DatasetsApi(this);
+    this.evaluationRulesApi = new com.langfuse.client.evaluationRules.EvaluationRulesApi(this);
+    this.asyncEvaluationRulesApi = new com.langfuse.client.evaluationRules.async.EvaluationRulesApi(this);
+    this.evaluatorsApi = new com.langfuse.client.evaluators.EvaluatorsApi(this);
+    this.asyncEvaluatorsApi = new com.langfuse.client.evaluators.async.EvaluatorsApi(this);
     this.experimentsApi = new com.langfuse.client.experiments.ExperimentsApi(this);
     this.asyncExperimentsApi = new com.langfuse.client.experiments.async.ExperimentsApi(this);
     this.feedbackApi = new com.langfuse.client.feedback.FeedbackApi(this);
@@ -272,6 +282,26 @@ public abstract class LangfuseClient extends ApiClient implements LangfuseApi {
   @Override
   public com.langfuse.api.datasets.async.DatasetsApi asyncDatasets() {
     return asyncDatasetsApi;
+  }
+
+  @Override
+  public EvaluationRulesApi evaluationRules() {
+    return evaluationRulesApi;
+  }
+
+  @Override
+  public com.langfuse.api.evaluationRules.async.EvaluationRulesApi asyncEvaluationRules() {
+    return asyncEvaluationRulesApi;
+  }
+
+  @Override
+  public EvaluatorsApi evaluators() {
+    return evaluatorsApi;
+  }
+
+  @Override
+  public com.langfuse.api.evaluators.async.EvaluatorsApi asyncEvaluators() {
+    return asyncEvaluatorsApi;
   }
 
   @Override

@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import com.langfuse.api.model.UnstableCreateDashboardPlacementRequest;
-import com.langfuse.api.model.UnstableCreateDashboardPlacementRequestOneOf;
 import com.langfuse.api.model.UnstableCreateDashboardRequest;
 import com.langfuse.api.model.UnstableCreateDashboardWidgetRequest;
+import com.langfuse.api.model.UnstableCreateWidgetPlacement;
 import com.langfuse.api.model.UnstableDashboard;
 import com.langfuse.api.model.UnstableDashboardWidgetChartType;
 import com.langfuse.api.model.UnstableDashboardWidgetMetric;
@@ -130,9 +130,9 @@ abstract class UnstableDashboardsApiAsyncTest extends AbstractLangfuseClientTest
                         .dashboardId(dashboardId)
                         .unstableCreateDashboardPlacementRequest(
                                 new UnstableCreateDashboardPlacementRequest(
-                                        UnstableCreateDashboardPlacementRequestOneOf.builder()
+                                        UnstableCreateWidgetPlacement.builder()
                                                 .widgetId(widgetId)
-                                                .type(UnstableCreateDashboardPlacementRequestOneOf.TypeEnum.WIDGET)
+                                                .type(UnstableCreateWidgetPlacement.TypeEnum.WIDGET)
                                                 .x(0)
                                                 .y(0)
                                                 .width(6)
@@ -141,7 +141,7 @@ abstract class UnstableDashboardsApiAsyncTest extends AbstractLangfuseClientTest
                         .build());
 
         assertThat(placement).isNotNull();
-        placementId = placement.getUnstableDashboardPlacementOneOf().getId();
+        placementId = placement.getUnstableWidgetPlacement().getId();
         assertThat(placementId).isNotBlank();
     }
 
