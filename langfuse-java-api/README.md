@@ -10,7 +10,7 @@ This module defines the public contract that client implementations must fulfill
 <dependency>
     <groupId>com.langfuse</groupId>
     <artifactId>langfuse-java-api</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.1-SNAPSHOT</version>
 </dependency>
 ```
 

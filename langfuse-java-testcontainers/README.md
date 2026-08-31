@@ -8,7 +8,7 @@
 <dependency>
     <groupId>com.langfuse</groupId>
     <artifactId>langfuse-java-testcontainers</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.1-SNAPSHOT</version>
     <scope>test</scope>
 </dependency>
 ```

@@ -49,7 +49,7 @@ Add the client dependency to your project:
 <dependency>
     <groupId>com.langfuse</groupId>
     <artifactId>langfuse-java-client</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -181,7 +181,7 @@ Add the testcontainers module to your test dependencies:
 <dependency>
     <groupId>com.langfuse</groupId>
     <artifactId>langfuse-java-testcontainers</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.1-SNAPSHOT</version>
     <scope>test</scope>
 </dependency>
 ```

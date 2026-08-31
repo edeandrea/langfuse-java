@@ -8,7 +8,7 @@ Reference HTTP client implementation for the Langfuse Java SDK. Uses `java.net.h
 <dependency>
     <groupId>com.langfuse</groupId>
     <artifactId>langfuse-java-client</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.1-SNAPSHOT</version>
 </dependency>
 ```
 
